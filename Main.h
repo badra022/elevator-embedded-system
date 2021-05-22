@@ -34,8 +34,8 @@
 #define GPIO_PORT5_DIRECTION    (P74OUT)
 
 /* GPIO direction setting */
-#define GPIO_OUT                (0)
-#define GPIO_IN                 (1)
+#define GPIO_OUT                (1)
+#define GPIO_IN                 (0)
 
 /* GPIO port operations */
 #define GPIO_InitPort(CONTROL, DIRECTION)   ((CONTROL) = ((DIRECTION)? (~GPIO_OUT):(GPIO_OUT)))
