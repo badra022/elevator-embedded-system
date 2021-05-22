@@ -5,13 +5,11 @@
 
 typedef enum
 {
-    LED_0,
-    LED_1,
-    LED_2,
-    LED_3
+	MOTOR,
 }tLED;
 
 typedef enum
+
 {
    LED_OFF,
    LED_ON

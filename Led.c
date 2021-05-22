@@ -10,17 +10,8 @@ void LED_Init(tLED led, tLED_State state)
     /* Configure led pins as output */
     switch (led)
     {
-        case LED_0:
-            GPIO_InitPortPin(LED_0_PORT_CR, LED_0_PIN, GPIO_OUT);
-            break;
-        case LED_1:
-           GPIO_InitPortPin(LED_1_PORT_CR, LED_1_PIN, GPIO_OUT);
-            break;
-        case LED_2:
-            GPIO_InitPortPin(LED_2_PORT_CR, LED_2_PIN, GPIO_OUT);
-            break;
-        case LED_3:
-            GPIO_InitPortPin(LED_3_PORT_CR, LED_3_PIN, GPIO_OUT);
+        case MOTOR:
+            GPIO_InitPortPin(MOTOR_PORT_CR, MOTOR_PIN, GPIO_OUT);
             break;
         default:
             /* Should not come here */
@@ -56,17 +47,8 @@ void LED_SetState(tLED led, tLED_State state)
     /* Set led state */
     switch (led)
     {
-        case LED_0:
-            GPIO_WritePortPin(LED_0_PORT_DR, LED_0_PIN, state);
-            break;
-        case LED_1:
-            GPIO_WritePortPin(LED_1_PORT_DR, LED_1_PIN, state);
-            break;
-        case LED_2:
-            GPIO_WritePortPin(LED_2_PORT_DR, LED_2_PIN, state);
-            break;
-        case LED_3:
-            GPIO_WritePortPin(LED_3_PORT_DR, LED_3_PIN, state);
+        case MOTOR:
+            GPIO_WritePortPin(MOTOR_PORT_DR, MOTOR_PIN, state);
             break;
         default:
             /* Should not come here */
@@ -83,17 +65,8 @@ tLED_State LED_GetState(tLED led)
     /* Set led state */
     switch (led)
     {
-        case LED_0:
-            ret = GPIO_ReadPortPin(LED_0_PORT_DR, LED_0_PIN);
-            break;
-        case LED_1:
-            ret = GPIO_ReadPortPin(LED_1_PORT_DR, LED_1_PIN);
-            break;
-        case LED_2:
-            ret = GPIO_ReadPortPin(LED_2_PORT_DR, LED_2_PIN);
-            break;
-        case LED_3:
-            ret = GPIO_ReadPortPin(LED_3_PORT_DR, LED_3_PIN);
+        case MOTOR:
+            ret = GPIO_ReadPortPin(MOTOR_PORT_DR, MOTOR_PIN);
             break;
         default:
             /* Should not come here */

@@ -1,7 +1,7 @@
-#ifndef __LED_H__
-#define __LED_H__
+#ifndef __SWITCH_H__
+#define __SWITCH_H__
 
-#define LED_DELAY_MS (1000)
+#define PULL_UP_MODE
 
 typedef enum
 {
@@ -14,17 +14,22 @@ typedef enum
   FLOOR4
 }tSwitch;
 
+#ifdef PULL_UP_MODE
 typedef enum
-
 {
-   LED_OFF,
-   LED_ON
-}tLED_State;
+  PRESSED,
+  NOT_PRESSED
+}tSwitch_state;
+#elif /* PULL_DOWN_MODE */
+typedef enum
+{
+  NOT_PRESSED,
+  PRESSED
+}tSwitch_state;
+#endif
+
+void SWITCH_Init(tSwitch switch_number);
+tSwitch_state SWITCH_Read(tSwitch switch_number);
 
 
-void LED_Init(tLED led, tLED_State state);
-void LED_SetState(tLED led, tLED_State state);
-tLED_State LED_GetState(tLED led);
-void LED_Toggle(tLED led);
-
-#endif // __LED_H__
+#endif // __SWITCH_H__
