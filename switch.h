@@ -14,7 +14,8 @@ typedef enum
   FLOOR4,
   OPEN,
   INCREASE,
-  DECREASE
+  DECREASE,
+  BLOCK_DOOR
 }tSwitch;
 
 #ifdef PULL_UP_MODE

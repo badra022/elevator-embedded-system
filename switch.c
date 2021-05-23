@@ -48,6 +48,10 @@ void SWITCH_Init(tSwitch switch_number)
           GPIO_InitPortPin(DECREASE_SWITCH_PORT_CR, DECREASE_SWITCH_PIN, GPIO_IN);
           GPIO_WritePortPin(DECREASE_SWITCH_PORT_DR, DECREASE_SWITCH_PIN, HIGH);
           break;
+      case BLOCK_DOOR:
+          GPIO_InitPortPin(BLOCK_DOOR_SWITCH_PORT_CR, BLOCK_DOOR_SWITCH_PIN, GPIO_IN);
+          GPIO_WritePortPin(BLOCK_DOOR_SWITCH_PORT_DR, BLOCK_DOOR_SWITCH_PIN, HIGH);
+          break;
       default:
           /* Should not come here */
           break;
@@ -87,6 +91,9 @@ tSwitch_state SWITCH_Read(tSwitch switch_number)
             break;
         case DECREASE:
             ret = GPIO_ReadPortPin(DECREASE_SWITCH_PORT_DR, DECREASE_SWITCH_PIN);
+            break;
+        case BLOCK_DOOR:
+            ret = GPIO_ReadPortPin(BLOCK_DOOR_SWITCH_PORT_DR, BLOCK_DOOR_SWITCH_PIN);
             break;
         default:
             /* Should not come here */

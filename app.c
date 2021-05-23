@@ -12,6 +12,58 @@
 #define MIN_PERSONS				(1)
 #define EMPTY							(0)
 
+
+void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigned char *persons)
+{
+	unsigned int system_ticks = 0;
+	/* opening the door for 2 seconds */
+	LED_SetState(MOTOR, LED_ON);
+	Delay_MS(2 * SECOND_DELAY);
+	LED_SetState(MOTOR, LED_OFF);
+	/* turning open Led ON */
+	LED_SetState(OPEN_LED, LED_ON);
+	system_ticks = 0;
+	/* wait 5 seconds (while checking the UP button request) */
+	while(system_ticks != 5 * SYSTEM_TICKS)
+	{
+			/* check some buttons while waiting */
+			if(SWITCH_Read(UP) == PRESSED)
+			{
+				*UP_Flag = TRUE;
+			}
+			if(SWITCH_Read(DOWN) == PRESSED)
+			{
+				*DOWN_Flag = TRUE;
+			}
+			if(SWITCH_Read(INCREASE) == PRESSED){(*persons)++;}
+			while(SWITCH_Read(INCREASE) == PRESSED);
+
+			if(SWITCH_Read(DECREASE) == PRESSED){persons > MIN_PERSONS?(*persons)-- : MIN_PERSONS;}
+			while(SWITCH_Read(DECREASE) == PRESSED);
+
+			if(*persons > MAX_PERSONS)
+			{
+				LED_SetState(ALARM, LED_ON);
+			}
+			else{
+				system_ticks++;
+			}
+
+			if(SWITCH_Read(BLOCK_DOOR) == PRESSED || SWITCH_Read(OPEN) == PRESSED)
+			{
+				system_ticks = 0; /* Reload the 5 second delay */
+			}
+			Delay_MS(SECOND_DELAY/SYSTEM_TICKS);
+	}
+		LED_SetState(OPEN_LED, LED_OFF);
+		/* closing the door of the elevator after the 5 seconds delay */
+		LED_SetState(MOTOR, LED_ON);
+		Delay_MS(2 * SECOND_DELAY);
+		LED_SetState(MOTOR, LED_OFF);
+
+}
+
+
 void main()
 {
 		/* GLOBAL variables used in the application (initial states of the system) */
@@ -48,49 +100,21 @@ void main()
 		SWITCH_Init(OPEN);
 		SWITCH_Init(INCREASE);
 		SWITCH_Init(DECREASE);
+		SWITCH_Init(BLOCK_DOOR);
 		LED_Init(MOTOR, LED_OFF);
 		LED_Init(MOVING, LED_OFF);
 		LED_Init(OPEN_LED, LED_ON);
 		LED_Init(ALARM, LED_OFF);
     sevenSeg_init();
 
-		sevenSeg_write(i % 10);
-		i++;
-
     while (1)
     {
 
 			if(firstTime == TRUE){
+
+					firstTime = FALSE;
 					/* first time to execute this code the elevator is on GROUND */
-					/* opening the door for 2 seconds */
-					LED_SetState(MOTOR, LED_ON);
-					Delay_MS(2 * SECOND_DELAY);
-					/* turning open Led ON */
-					LED_SetState(OPEN_LED, LED_ON);
-					system_ticks = 0;
-					/* wait 5 seconds (while checking the UP button request) */
-					while(system_ticks != 5 * SYSTEM_TICKS)
-					{
-							if(SWITCH_Read(UP) == PRESSED)
-							{
-								UP_Flag = TRUE;
-							}
-							if(SWITCH_Read(INCREASE) == PRESSED){persons++;}
-							while(SWITCH_Read(INCREASE) == PRESSED);
-
-							if(SWITCH_Read(DECREASE) == PRESSED){persons > MIN_PERSONS?persons-- : MIN_PERSONS;}
-							while(SWITCH_Read(DECREASE) == PRESSED);
-
-							if(persons > MAX_PERSONS)
-							{
-								LED_SetState(ALARM, LED_ON);
-							}
-							else{
-								system_ticks++;
-							}
-							Delay_MS(SECOND_DELAY/SYSTEM_TICKS);
-					}
-						LED_SetState(OPEN_LED, LED_OFF);
+					loadElevator_Task(&UP_Flag, &DOWN_Flag, &persons);
 		}
 
 
