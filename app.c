@@ -49,7 +49,7 @@ void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigne
 				system_ticks++;
 			}
 
-			if(SWITCH_Read(BLOCK_DOOR) == PRESSED || SWITCH_Read(OPEN) == PRESSED)
+			if(SWITCH_Read(BLOCK_DOOR) == PRESSED || SWITCH_Read(OPEN) == PRESSED || *persons == 0)
 			{
 				system_ticks = 0; /* Reload the 5 second delay */
 			}
@@ -62,6 +62,8 @@ void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigne
 		LED_SetState(MOTOR, LED_OFF);
 
 }
+
+void moveElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, )
 
 
 void main()
@@ -109,13 +111,7 @@ void main()
 
     while (1)
     {
-
-			if(firstTime == TRUE){
-
-					firstTime = FALSE;
-					/* first time to execute this code the elevator is on GROUND */
-					loadElevator_Task(&UP_Flag, &DOWN_Flag, &persons);
-		}
+				loadElevator_Task(&UP_Flag, &DOWN_Flag, &persons);
 
 
 				system_ticks = 0;
