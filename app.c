@@ -5,13 +5,15 @@
 #include "sevenSeg.h"
 #include "switch.h"
 
-#define SYSTEM_TICKS			(10)
+#define SYSTEM_TICKS			(10) /* controls system latency */
 #define TOP_FLOOR					(4)
 #define GND_FLOOR					(0)
 #define MAX_PERSONS				(4)
 #define MIN_PERSONS				(1)
 #define EMPTY							(0)
 #define FLOORS_NUMBER			(5)
+#define FLOOR_TIME				(5)
+#define LED_TOGGLE_TIME		(1)
 
 
 void loadElevator_Task(unsigned char *requestedFloors, unsigned char *persons)
@@ -50,7 +52,7 @@ void loadElevator_Task(unsigned char *requestedFloors, unsigned char *persons)
 				system_ticks++;
 			}
 
-			if(SWITCH_Read(BLOCK_DOOR) == PRESSED || SWITCH_Read(OPEN) == PRESSED || *persons == 0)
+			if(SWITCH_Read(BLOCK_DOOR) == PRESSED || SWITCH_Read(OPEN) == PRESSED || *persons == EMPTY)
 			{
 				system_ticks = 0; /* Reload the 5 second delay */
 			}
@@ -104,17 +106,37 @@ Return_state selectFloors_Task(unsigned char *requestedFloors)
 /* process of moving the elevator from the currentFloor to the comingFloor (checking the Up and Down Flags through the process)*/
 void moveElevator_Task(unsigned char *currentFloor, unsigned char *comingFloor)
 {
-	
+	while(*currentFloor != *comingFloor)
+	{
+		sevenSeg_write(*currentFloor);
+		unsigned int system_ticks = 0;
+		while(system_ticks != FLOOR_TIME * SYSTEM_TICKS)
+		{
+			LED_Toggle(MOVING);
+			while(system_ticks != LED_TOGGLE_TIME * SYSTEM_TICKS)
+			{
+				system_ticks++;
+				if(SWITCH_Read(UP) == PRESSED)
+				{
+					requestedFloors[5] = TRUE;
+				}
+				if(SWITCH_Read(DOWN) == PRESSED)
+				{
+					requestedFloors[0] = TRUE;
+				}
+				Delay_MS(SECOND_DELAY/SYSTEM_TICKS);
+			}
+		}
+		*currentFloor = *currentFloor + 1;
+	}
+	LED_SetState(MOVING, LED_OFF);
+	sevenSeg_write(*currentFloor);
+
 }
-
-
-
 
 void main()
 {
 		/* GLOBAL variables used in the application (initial states of the system) */
-		unsigned char i = 0;
-		unsigned int system_ticks = 0;
 		unsigned char currentFloor = GND_FLOOR;
 		unsigned char comingFloor = GND_FLOOR;
 		unsigned char requestedFloors[] = {FALSE, FALSE, FALSE, FALSE, FALSE};
@@ -149,6 +171,7 @@ void main()
 		LED_Init(OPEN_LED, LED_ON);
 		LED_Init(ALARM, LED_OFF);
     sevenSeg_init();
+		sevenSeg_write(currentFloor);
 
     while (1)
     {
