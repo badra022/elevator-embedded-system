@@ -9,4 +9,12 @@ void Delay_MS(int ms);
 #define TRUE    (1u)
 #define FALSE   (0u)
 
+typedef enum
+{
+  FAILURE,
+  SUCCESS
+}Return_state;
+
+typedef unsigned char uint8; 
+
 #endif

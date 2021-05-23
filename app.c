@@ -11,9 +11,10 @@
 #define MAX_PERSONS				(4)
 #define MIN_PERSONS				(1)
 #define EMPTY							(0)
+#define FLOORS_NUMBER			(5)
 
 
-void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigned char *persons)
+void loadElevator_Task(unsigned char *requestedFloors, unsigned char *persons)
 {
 	unsigned int system_ticks = 0;
 	/* opening the door for 2 seconds */
@@ -29,11 +30,11 @@ void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigne
 			/* check some buttons while waiting */
 			if(SWITCH_Read(UP) == PRESSED)
 			{
-				*UP_Flag = TRUE;
+				requestedFloors[5] = TRUE;
 			}
 			if(SWITCH_Read(DOWN) == PRESSED)
 			{
-				*DOWN_Flag = TRUE;
+				requestedFloors[0] = TRUE;
 			}
 			if(SWITCH_Read(INCREASE) == PRESSED){(*persons)++;}
 			while(SWITCH_Read(INCREASE) == PRESSED);
@@ -63,7 +64,50 @@ void loadElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, unsigne
 
 }
 
-void moveElevator_Task(unsigned char *UP_Flag, unsigned char *DOWN_Flag, )
+/* a 5 seconds Routine for selecting the floors they want the elevator to go to ( they can Reopen the door for 5 seconds if thety want) */
+Return_state selectFloors_Task(unsigned char *requestedFloors)
+{
+	unsigned int system_ticks = 0;
+	while(system_ticks != 5 * SYSTEM_TICKS)
+	{
+		system_ticks++;
+		if(SWITCH_Read(OPEN) == PRESSED)
+		{
+			return FAILURE;
+		}
+		if(SWITCH_Read(GROUND) == PRESSED || SWITCH_Read(DOWN) == PRESSED)
+		{
+			requestedFloors[0] = TRUE;
+		}
+		else if(SWITCH_Read(FLOOR1) == PRESSED)
+				{
+					requestedFloors[1] = TRUE;
+				}
+		else if(SWITCH_Read(FLOOR2) == PRESSED)
+				{
+					requestedFloors[2] = TRUE;
+				}
+		else if(SWITCH_Read(FLOOR3) == PRESSED)
+				{
+					requestedFloors[3] = TRUE;
+				}
+		else if(SWITCH_Read(FLOOR4) == PRESSED || SWITCH_Read(UP) == PRESSED)
+				{
+					requestedFloors[4] = TRUE;
+				}
+
+		Delay_MS(SECOND_DELAY/SYSTEM_TICKS);
+	}
+	return SUCCESS;
+}
+
+/* process of moving the elevator from the currentFloor to the comingFloor (checking the Up and Down Flags through the process)*/
+void moveElevator_Task(unsigned char *currentFloor, unsigned char *comingFloor)
+{
+	
+}
+
+
 
 
 void main()
@@ -71,14 +115,11 @@ void main()
 		/* GLOBAL variables used in the application (initial states of the system) */
 		unsigned char i = 0;
 		unsigned int system_ticks = 0;
-		unsigned char UP_Flag = FALSE;
-		unsigned char DOWN_Flag = FALSE;
-		unsigned char OPEN_Flag = TRUE;
 		unsigned char currentFloor = GND_FLOOR;
 		unsigned char comingFloor = GND_FLOOR;
 		unsigned char requestedFloors[] = {FALSE, FALSE, FALSE, FALSE, FALSE};
-		unsigned char firstTime = TRUE;
 		unsigned char persons = EMPTY;
+		unsigned char dummyVar = 0;
 
     // diable the watch dog
     WDTCN = 0x0DE;
@@ -111,18 +152,25 @@ void main()
 
     while (1)
     {
-				loadElevator_Task(&UP_Flag, &DOWN_Flag, &persons);
+				loadElevator_Task(requestedFloors, &persons);
 
-
-				system_ticks = 0;
-				while(system_ticks != 1 * SYSTEM_TICKS)
+				/* if the users pressed OPEN button, this statement will be FALSE */
+				if(selectFloors_Task(requestedFloors) == SUCCESS)
 				{
-						system_ticks++;
-						if(SWITCH_Read(UP) == PRESSED)
-						{
-							i = 0;
-						}
-		        Delay_MS(SECOND_DELAY/SYSTEM_TICKS);
+					/* check if the user selected some floors or Not */
+					comingFloor = (comingFloor + 1)% FLOORS_NUMBER;
+					while(comingFloor != currentFloor && requestedFloors[comingFloor] == FALSE){
+						comingFloor = (comingFloor + 1)% FLOORS_NUMBER;
+					}
+					if(comingFloor != currentFloor){
+						/* there's some Floors to visit */
+						moveElevator_Task(&currentFloor, &comingFloor);
+					}
+					else
+					{
+						/* there's no selected floors remained and No Up or Down Requests */
+						/* Do Nothing Here */
+					}
 				}
     }
 }
