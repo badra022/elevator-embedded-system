@@ -70,8 +70,6 @@
 #define SEVEN_SEGMENT_ENABLE_DIR_PORT     GPIO_PORT1_DIRECTION
 #define SEVEN_SEGMENT_ENABLE_PIN          GPIO_PIN_0
 
-char numbers[] = {0x0C0, 0x0F9, 0x0A4, 0x0B0, 0x99, 0x92, 0x82, 0x0F8, 0x80, 0x90};
-
 
 /* End of code filling */
 #endif // __PORT_H__

@@ -9,6 +9,8 @@ void Delay_MS(int ms);
 #define TRUE    (1u)
 #define FALSE   (0u)
 
+#define SECOND_DELAY		(1000)
+
 typedef enum
 {
   FAILURE,

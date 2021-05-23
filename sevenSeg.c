@@ -1,8 +1,9 @@
 #include "Main.h"
 #include "Port.h"
 #include "Common.h"
-#include "sevenSeg_private.h"
 #include "sevenSeg.h"
+
+char numbers[] = {0x0C0, 0x0F9, 0x0A4, 0x0B0, 0x99, 0x92, 0x82, 0x0F8, 0x80, 0x90};
 
 void sevenSeg_init(void)
 {
