@@ -13,6 +13,15 @@ void LED_Init(tLED led, tLED_State state)
         case MOTOR:
             GPIO_InitPortPin(MOTOR_PORT_CR, MOTOR_PIN, GPIO_OUT);
             break;
+        case MOVING:
+            GPIO_InitPortPin(MOVING_PORT_CR, MOVING_PIN, GPIO_OUT);
+            break;
+        case OPEN_LED:
+            GPIO_InitPortPin(OPEN_LED_PORT_CR, OPEN_LED_PIN, GPIO_OUT);
+            break;
+        case ALARM:
+            GPIO_InitPortPin(ALARM_PORT_CR, ALARM_PIN, GPIO_OUT);
+            break;
         default:
             /* Should not come here */
             break;
@@ -50,6 +59,15 @@ void LED_SetState(tLED led, tLED_State state)
         case MOTOR:
             GPIO_WritePortPin(MOTOR_PORT_DR, MOTOR_PIN, state);
             break;
+        case MOVING:
+            GPIO_WritePortPin(MOVING_PORT_DR, MOVING_PIN, state);
+            break;
+        case OPEN_LED:
+            GPIO_WritePortPin(OPEN_LED_PORT_DR, OPEN_LED_PIN, state);
+            break;
+        case ALARM:
+            GPIO_WritePortPin(ALARM_PORT_DR, ALARM_PIN, state);
+            break;
         default:
             /* Should not come here */
             break;
@@ -67,6 +85,15 @@ tLED_State LED_GetState(tLED led)
     {
         case MOTOR:
             ret = GPIO_ReadPortPin(MOTOR_PORT_DR, MOTOR_PIN);
+            break;
+        case MOVING:
+            ret = GPIO_ReadPortPin(MOVING_PORT_DR, MOVING_PIN);
+            break;
+        case OPEN_LED:
+            ret = GPIO_ReadPortPin(OPEN_LED_PORT_DR, OPEN_LED_PIN);
+            break;
+        case ALARM:
+            ret = GPIO_ReadPortPin(ALARM_PORT_DR, ALARM_PIN);
             break;
         default:
             /* Should not come here */

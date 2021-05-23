@@ -6,6 +6,9 @@
 typedef enum
 {
 	MOTOR,
+	OPEN_LED,
+	MOVING,
+	ALARM
 }tLED;
 
 typedef enum
